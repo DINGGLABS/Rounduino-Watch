@@ -209,7 +209,7 @@ void loop()
         displayWatch();
       }
       
-      clearBuffer();
+      clearCustomSymbol();
       
       /* substate machine */
       switch(configSubstate)
@@ -219,7 +219,7 @@ void loop()
           /* configuration started: */
           configFlag = true;
           
-          setBuffer(83, 80, MAX_BRIGHTNESS);
+          setCustomSymbol(83, 80, MAX_BRIGHTNESS);
           if (buttonEvent1 >= EVENT_SHORTCLICK) Time.year++;            // '>=' means short-click or long-click
           if (buttonEvent2 == EVENT_SHORTCLICK) configSubstate = M;
           if (buttonEvent3 >= EVENT_SHORTCLICK) Time.year--;
@@ -230,7 +230,7 @@ void loop()
 
         case M:
         {
-          setBuffer(95, 47, MAX_BRIGHTNESS);
+          setCustomSymbol(95, 47, MAX_BRIGHTNESS);
           if (buttonEvent1 >= EVENT_SHORTCLICK) Time.month++;
           if (buttonEvent2 == EVENT_SHORTCLICK) configSubstate = D;
           if (buttonEvent3 >= EVENT_SHORTCLICK) Time.month--;
@@ -241,7 +241,7 @@ void loop()
         
         case D:
         {
-          setBuffer(23, 47, MAX_BRIGHTNESS);
+          setCustomSymbol(23, 47, MAX_BRIGHTNESS);
           if (buttonEvent1 >= EVENT_SHORTCLICK) Time.date++;
           if (buttonEvent2 == EVENT_SHORTCLICK) configSubstate = d;
           if (buttonEvent3 >= EVENT_SHORTCLICK) Time.date--;
@@ -285,9 +285,9 @@ void loop()
         
         case d:
         {
-          setBuffer(35, 14, MAX_BRIGHTNESS);
-          drawBufferSymbol();
-          setBuffer(59, 14, MAX_BRIGHTNESS);
+          setCustomSymbol(35, 14, MAX_BRIGHTNESS);
+          drawCustomSymbol();
+          setCustomSymbol(59, 14, MAX_BRIGHTNESS);
           if (buttonEvent1 >= EVENT_SHORTCLICK) Time.day++;
           if (buttonEvent2 == EVENT_SHORTCLICK)
           {
@@ -303,7 +303,7 @@ void loop()
         
         case h:
         {
-          setBuffer(23, 47, MAX_BRIGHTNESS);
+          setCustomSymbol(23, 47, MAX_BRIGHTNESS);
           if (buttonEvent1 >= EVENT_SHORTCLICK) Time.hour++;
           if (buttonEvent2 == EVENT_SHORTCLICK) configSubstate = m;
           if (buttonEvent3 >= EVENT_SHORTCLICK) Time.hour--;
@@ -314,7 +314,7 @@ void loop()
         
         case m:
         {
-          setBuffer(95, 47, MAX_BRIGHTNESS);
+          setCustomSymbol(95, 47, MAX_BRIGHTNESS);
           if (buttonEvent1 >= EVENT_SHORTCLICK) Time.min++;
           if (buttonEvent2 == EVENT_SHORTCLICK) configSubstate = s;
           if (buttonEvent3 >= EVENT_SHORTCLICK) Time.min--;
@@ -325,7 +325,7 @@ void loop()
         
         case s:
         {
-          setBuffer(59, 80, MAX_BRIGHTNESS);
+          setCustomSymbol(59, 80, MAX_BRIGHTNESS);
           if (buttonEvent1 >= EVENT_SHORTCLICK) Time.sec++;
           if (buttonEvent2 == EVENT_SHORTCLICK)
           {
@@ -349,7 +349,7 @@ void loop()
         default: while (FOREVER) displayError();
       }
       
-      drawBufferSymbol();
+      drawCustomSymbol();
       clearSymbolList();
       
       break;
@@ -545,7 +545,7 @@ byte getButtonEvent3(unsigned int max_duration_shortclick, unsigned int max_dura
  ============================================================== */
 void drawBattery(byte x, byte y, byte b)
 {
-  clearBuffer();
+  clearCustomSymbol();
   
   drawRectangle(0, 0, 15, 7);  
   drawVLine(15, 2, 3);
@@ -555,10 +555,10 @@ void drawBattery(byte x, byte y, byte b)
   unsigned int v = (readBatteryVoltage() - V_SCAN_OFFSET);
   drawFilledRectangle(1, 1, 13 * v / (V_SCAN_MAX - V_SCAN_OFFSET), 5);
 
-  setBuffer(x, y, b);
-  drawBufferSymbol();
+  setCustomSymbol(x, y, b);
+  drawCustomSymbol();
   
-  clearBuffer();
+  clearCustomSymbol();
   clearSymbolList();
 }
 
@@ -576,13 +576,13 @@ void displayWatch()
 {
   if (!configFlag) getCurrentTime();
   
-  setBigNumber(':', 47, 47, MAX_BRIGHTNESS);
+  setBigNumberSymbol(':', 47, 47, MAX_BRIGHTNESS);
   char string[3];
   
   itoa(Time.sec, string, 10);
   if(Time.sec < 10) 
   {
-    setBigNumber('0', 35, 80, MAX_BRIGHTNESS);
+    setBigNumberSymbol('0', 35, 80, MAX_BRIGHTNESS);
     drawBigNumbers(string, 59, 80, MAX_BRIGHTNESS);
   }
   else drawBigNumbers(string, 35, 80, MAX_BRIGHTNESS);
@@ -590,7 +590,7 @@ void displayWatch()
   itoa(Time.min, string, 10);
   if(Time.min < 10)
   {
-    setBigNumber('0', 71, 47, MAX_BRIGHTNESS);
+    setBigNumberSymbol('0', 71, 47, MAX_BRIGHTNESS);
     drawBigNumbers(string, 95, 47, MAX_BRIGHTNESS);
   }
   else drawBigNumbers(string, 71, 47, MAX_BRIGHTNESS);
@@ -598,7 +598,7 @@ void displayWatch()
   itoa(Time.hour, string, 10);
   if(Time.hour < 10)
   {
-    setBigNumber('0', 0, 47, MAX_BRIGHTNESS);
+    setBigNumberSymbol('0', 0, 47, MAX_BRIGHTNESS);
     drawBigNumbers(string, 23, 47, MAX_BRIGHTNESS);
   }
   else drawBigNumbers(string, 0, 47, MAX_BRIGHTNESS);
@@ -624,7 +624,7 @@ void displayDate()
   
   if (!configFlag) getCurrentTime();
   
-  setBigNumber('.', 47, 47, MAX_BRIGHTNESS);
+  setBigNumberSymbol('.', 47, 47, MAX_BRIGHTNESS);
   
   /* draw year */
   itoa(Time.year, stringYear, 10);
@@ -634,7 +634,7 @@ void displayDate()
   itoa(Time.month, string, 10);
   if(Time.month < 10)
   {
-    setBigNumber('0', 71, 47, MAX_BRIGHTNESS);
+    setBigNumberSymbol('0', 71, 47, MAX_BRIGHTNESS);
     drawBigNumbers(string, 95, 47, MAX_BRIGHTNESS);
   }
   else drawBigNumbers(string, 71, 47, MAX_BRIGHTNESS);
@@ -643,7 +643,7 @@ void displayDate()
   itoa(Time.date, string, 10);
   if(Time.date < 10)
   {
-    setBigNumber('0', 0, 47, MAX_BRIGHTNESS);
+    setBigNumberSymbol('0', 0, 47, MAX_BRIGHTNESS);
     drawBigNumbers(string, 23, 47, MAX_BRIGHTNESS);
   }
   else drawBigNumbers(string, 0, 47, MAX_BRIGHTNESS);
