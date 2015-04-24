@@ -378,8 +378,6 @@ void loop()
  * \fn      getButtonEventX
  * \brief   returns given values on base of current button 
  *          state
- *          (contains a while-loop as long as the button is
- *          pushed)
  *
  * \requ    bool function: getButtonStateX()
  *          define: EVENT_NONE
