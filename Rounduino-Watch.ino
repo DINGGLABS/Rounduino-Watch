@@ -126,7 +126,7 @@ void loop()
       static boolean firstInitPass = true;
       
       /* display startup message */
-      const char str1[] = {"ROUNDUINO"};
+      const unsigned char str1[] = {"ROUNDUINO"};
       drawString(str1, 8, 55, MAX_BRIGHTNESS);
       delay(200);  // drawString needs some time to function! (~20ms per character)
        
@@ -219,7 +219,7 @@ void loop()
           /* configuration started: */
           configFlag = true;
           
-          setCustomSymbol(83, 80, MAX_BRIGHTNESS);
+          createCustomSymbol(83, 80, MAX_BRIGHTNESS);
           if (buttonEvent1 >= EVENT_SHORTCLICK) Time.year++;            // '>=' means short-click or long-click
           if (buttonEvent2 == EVENT_SHORTCLICK) configSubstate = M;
           if (buttonEvent3 >= EVENT_SHORTCLICK) Time.year--;
@@ -230,7 +230,7 @@ void loop()
 
         case M:
         {
-          setCustomSymbol(95, 47, MAX_BRIGHTNESS);
+          createCustomSymbol(95, 47, MAX_BRIGHTNESS);
           if (buttonEvent1 >= EVENT_SHORTCLICK) Time.month++;
           if (buttonEvent2 == EVENT_SHORTCLICK) configSubstate = D;
           if (buttonEvent3 >= EVENT_SHORTCLICK) Time.month--;
@@ -241,7 +241,7 @@ void loop()
         
         case D:
         {
-          setCustomSymbol(23, 47, MAX_BRIGHTNESS);
+          createCustomSymbol(23, 47, MAX_BRIGHTNESS);
           if (buttonEvent1 >= EVENT_SHORTCLICK) Time.date++;
           if (buttonEvent2 == EVENT_SHORTCLICK) configSubstate = d;
           if (buttonEvent3 >= EVENT_SHORTCLICK) Time.date--;
@@ -285,9 +285,9 @@ void loop()
         
         case d:
         {
-          setCustomSymbol(35, 14, MAX_BRIGHTNESS);
+          createCustomSymbol(35, 14, MAX_BRIGHTNESS);
           drawCustomSymbol();
-          setCustomSymbol(59, 14, MAX_BRIGHTNESS);
+          createCustomSymbol(59, 14, MAX_BRIGHTNESS);
           if (buttonEvent1 >= EVENT_SHORTCLICK) Time.day++;
           if (buttonEvent2 == EVENT_SHORTCLICK)
           {
@@ -303,7 +303,7 @@ void loop()
         
         case h:
         {
-          setCustomSymbol(23, 47, MAX_BRIGHTNESS);
+          createCustomSymbol(23, 47, MAX_BRIGHTNESS);
           if (buttonEvent1 >= EVENT_SHORTCLICK) Time.hour++;
           if (buttonEvent2 == EVENT_SHORTCLICK) configSubstate = m;
           if (buttonEvent3 >= EVENT_SHORTCLICK) Time.hour--;
@@ -314,7 +314,7 @@ void loop()
         
         case m:
         {
-          setCustomSymbol(95, 47, MAX_BRIGHTNESS);
+          createCustomSymbol(95, 47, MAX_BRIGHTNESS);
           if (buttonEvent1 >= EVENT_SHORTCLICK) Time.min++;
           if (buttonEvent2 == EVENT_SHORTCLICK) configSubstate = s;
           if (buttonEvent3 >= EVENT_SHORTCLICK) Time.min--;
@@ -325,7 +325,7 @@ void loop()
         
         case s:
         {
-          setCustomSymbol(59, 80, MAX_BRIGHTNESS);
+          createCustomSymbol(59, 80, MAX_BRIGHTNESS);
           if (buttonEvent1 >= EVENT_SHORTCLICK) Time.sec++;
           if (buttonEvent2 == EVENT_SHORTCLICK)
           {
@@ -545,15 +545,15 @@ void drawBattery(byte x, byte y, byte b)
 {
   clearCustomSymbol();
   
-  drawRectangle(0, 0, 15, 7);  
-  drawVLine(15, 2, 3);
-  drawVLine(16, 2, 3);
+  addRectangle(0, 0, 15, 7);  
+  addVLine(15, 2, 3);
+  addVLine(16, 2, 3);
   
   /* get battery voltage and draw battery content */
   unsigned int v = (readBatteryVoltage() - V_SCAN_OFFSET);
-  drawFilledRectangle(1, 1, 13 * v / (V_SCAN_MAX - V_SCAN_OFFSET), 5);
+  addFilledRectangle(1, 1, 13 * v / (V_SCAN_MAX - V_SCAN_OFFSET), 5);
 
-  setCustomSymbol(x, y, b);
+  createCustomSymbol(x, y, b);
   drawCustomSymbol();
   
   clearCustomSymbol();
@@ -574,29 +574,29 @@ void displayWatch()
 {
   if (!configFlag) getCurrentTime();
   
-  setBigNumberSymbol(':', 47, 47, MAX_BRIGHTNESS);
-  char string[3];
+  createBigNumberSymbol(':', 47, 47, MAX_BRIGHTNESS);
+  unsigned char string[3];
   
-  itoa(Time.sec, string, 10);
+  itoa(Time.sec, (char*) string, 10);
   if(Time.sec < 10) 
   {
-    setBigNumberSymbol('0', 35, 80, MAX_BRIGHTNESS);
+    createBigNumberSymbol('0', 35, 80, MAX_BRIGHTNESS);
     drawBigNumbers(string, 59, 80, MAX_BRIGHTNESS);
   }
   else drawBigNumbers(string, 35, 80, MAX_BRIGHTNESS);
   
-  itoa(Time.min, string, 10);
+  itoa(Time.min, (char*) string, 10);
   if(Time.min < 10)
   {
-    setBigNumberSymbol('0', 71, 47, MAX_BRIGHTNESS);
+    createBigNumberSymbol('0', 71, 47, MAX_BRIGHTNESS);
     drawBigNumbers(string, 95, 47, MAX_BRIGHTNESS);
   }
   else drawBigNumbers(string, 71, 47, MAX_BRIGHTNESS);
   
-  itoa(Time.hour, string, 10);
+  itoa(Time.hour, (char*) string, 10);
   if(Time.hour < 10)
   {
-    setBigNumberSymbol('0', 0, 47, MAX_BRIGHTNESS);
+    createBigNumberSymbol('0', 0, 47, MAX_BRIGHTNESS);
     drawBigNumbers(string, 23, 47, MAX_BRIGHTNESS);
   }
   else drawBigNumbers(string, 0, 47, MAX_BRIGHTNESS);
@@ -617,31 +617,31 @@ void displayWatch()
  ============================================================== */
 void displayDate()
 {
-  char stringYear[5];
-  char string[3];
+  unsigned char stringYear[5];
+  unsigned char string[3];
   
   if (!configFlag) getCurrentTime();
   
-  setBigNumberSymbol('.', 47, 47, MAX_BRIGHTNESS);
+  createBigNumberSymbol('.', 47, 47, MAX_BRIGHTNESS);
   
   /* draw year */
-  itoa(Time.year, stringYear, 10);
+  itoa(Time.year, (char*) stringYear, 10);
   drawBigNumbers(stringYear, 11, 80, MAX_BRIGHTNESS);
   
   /* draw month */
-  itoa(Time.month, string, 10);
+  itoa(Time.month, (char*) string, 10);
   if(Time.month < 10)
   {
-    setBigNumberSymbol('0', 71, 47, MAX_BRIGHTNESS);
+    createBigNumberSymbol('0', 71, 47, MAX_BRIGHTNESS);
     drawBigNumbers(string, 95, 47, MAX_BRIGHTNESS);
   }
   else drawBigNumbers(string, 71, 47, MAX_BRIGHTNESS);
   
   /* draw day (date) */
-  itoa(Time.date, string, 10);
+  itoa(Time.date, (char*) string, 10);
   if(Time.date < 10)
   {
-    setBigNumberSymbol('0', 0, 47, MAX_BRIGHTNESS);
+    createBigNumberSymbol('0', 0, 47, MAX_BRIGHTNESS);
     drawBigNumbers(string, 23, 47, MAX_BRIGHTNESS);
   }
   else drawBigNumbers(string, 0, 47, MAX_BRIGHTNESS);
@@ -666,7 +666,7 @@ void displayDate()
 
 void displayError()
 {
-  const char str[] = {"Error"};
+  const unsigned char str[] = {"Error"};
   
   drawString(str, 16, 63, MAX_BRIGHTNESS/2);
   delay(500);
